@@ -62,16 +62,32 @@
         />
       </UButton>
     </div>
-  </template>
+</template>
   
-  <script setup>
+<script setup>
+  import { useUserStore } from '~/stores/userStore';
+
+  definePageMeta({
+    layout: false, 
+    middleware: 'redirect-if-authenticated'
+  });
   const email = ref('');
   const password = ref('');
   const colorMode = useColorMode();
-  
-  const handleLogin = () => {
-    // Handle login logic here
+  const error = ref(null);
+  const router = useRouter()
+
+  const userStore = useUserStore()
+  const handleLogin = async () => {
     console.log('Logging in with:', email.value, password.value);
+    await userStore.login(email.value, password.value);
+    if(userStore.error) {
+      error.value = userStore.error;
+      console.log('Error:', error.value);
+    } else {
+      router.push('/');
+      alert('Successful sign in')
+    }
   };
   
   const handleGoogleLogin = () => {
@@ -82,8 +98,8 @@
   const toggleColorMode = () => {
     colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
   };
-  </script>
+</script>
   
-  <style scoped>
-  /* Add custom styles if needed */
-  </style>
+<style scoped>
+/* Add custom styles if needed */
+</style>

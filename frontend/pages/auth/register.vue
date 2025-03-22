@@ -71,7 +71,7 @@
       <template #footer>
         <p class="text-center text-gray-600 dark:text-gray-300">
           Already have an account?
-          <NuxtLink to="/login" class="text-primary-500 hover:underline"> Login </NuxtLink>
+          <NuxtLink to="/auth/login" class="text-primary-500 hover:underline"> Login </NuxtLink>
         </p>
       </template>
     </UCard>
@@ -92,12 +92,21 @@
 </template>
 
 <script setup>
+
+import { useUserStore } from '~/stores/userStore';
+
+definePageMeta({
+  layout: false, 
+  middleware: 'redirect-if-authenticated'
+});
 const fullName = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 const error = ref(null);
 const colorMode = useColorMode();
+const userStore = useUserStore();
+const router = useRouter();
 
 // Email validation
 const isEmailValid = computed(() => {
@@ -110,7 +119,7 @@ const isPasswordValid = computed(() => {
   return password.value.length >= 6;
 });
 
-const handleRegister = () => {
+const handleRegister = async () => {
   error.value = null; // Reset error
 
   // Frontend validation
@@ -129,8 +138,15 @@ const handleRegister = () => {
     return;
   }
 
-  // If all validations pass, proceed with registration
   console.log('Registering with:', fullName.value, email.value, password.value);
+  await userStore.register(email.value, password.value, fullName.value);
+  if(userStore.error) {
+    error.value = userStore.error;
+    alert(userStore.error);
+  } else {
+    alert('Registration successful');
+    router.push('/');
+  }
 };
 
 const handleGoogleRegister = () => {

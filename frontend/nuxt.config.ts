@@ -2,7 +2,8 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: false },
-  modules: ['@nuxt/ui', '@nuxt/icon', '@nuxtjs/color-mode'],
+  ssr: false,
+  modules: ['@nuxt/ui', '@nuxt/icon', '@nuxtjs/color-mode', '@pinia/nuxt', 'reka-ui/nuxt'],
   colorMode: {
     preference: 'system', // default value of $colorMode.preference
     fallback: 'light', // fallback value if not system preference found
